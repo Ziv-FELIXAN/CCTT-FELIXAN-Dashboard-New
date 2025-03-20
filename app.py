@@ -3,23 +3,28 @@ from general_ui import setup_general_ui, setup_version_management
 from styling import apply_styling
 from module_manager import manage_modules
 
-# Set page layout to wide (must be the first Streamlit command)
+# Set page layout to wide
 st.set_page_config(layout="wide")
 
 # Setup general UI and version management
 conn, c, current_version = setup_general_ui()
 
-# Apply styling and add a test message to confirm it's called
+# Apply minimal styling (Font Awesome only)
 apply_styling()
-st.write("Styling applied successfully!")  # Test message to confirm apply_styling() is called
+
+# Add inline styles to test
+st.markdown(
+    "<h1 style='color: blue; font-size: 24px;'>CTT/FELIXAN System Ver3 - Test Inline Style</h1>",
+    unsafe_allow_html=True
+)
 
 # Manage modules
 manage_modules()
 
-# Footer
+# Footer with inline styles
 st.markdown(
-    f"<div style='background-color: #f1f1f1; padding: 10px; text-align: center; margin-top: 20px;'>"
-    f"<p>System Status: Online | Version: {current_version} | Date: 18/03/2025 | © System copyright Ziv Rotem-Bar 2025</p>"
+    "<div style='background-color: #f1f1f1; padding: 10px; text-align: center; margin-top: 20px;'>"
+    "<p style='color: black; font-size: 14px;'>System Status: Online | Version: VER3 | Date: 18/03/2025 | © System copyright Ziv Rotem-Bar 2025</p>"
     "</div>",
     unsafe_allow_html=True
 )
