@@ -20,21 +20,23 @@ def display_test_table():
         header += f"<th style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: #f1f1f1; font-weight: 500;'>{header_name}</th>"
     header += "</tr>"
     table_html += header
+    st.markdown(table_html, unsafe_allow_html=True)
 
     for idx, item in enumerate(st.session_state['test_data']):
         row = "<tr>"
         # Checkbox column
         checked = 'checked' if item['id'] in st.session_state.get('selected_test_items', []) else ''
         row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>"
-        checked_state = st.checkbox("", value=item['id'] in st.session_state.get('selected_test_items', []), key=f"select_{item['id']}", label_visibility="hidden")
-        if checked_state:
-            if 'selected_test_items' not in st.session_state:
-                st.session_state['selected_test_items'] = []
-            if item['id'] not in st.session_state['selected_test_items']:
-                st.session_state['selected_test_items'].append(item['id'])
-        else:
-            if 'selected_test_items' in st.session_state and item['id'] in st.session_state['selected_test_items']:
-                st.session_state['selected_test_items'].remove(item['id'])
+        with st.container():
+            checked_state = st.checkbox("", value=item['id'] in st.session_state.get('selected_test_items', []), key=f"select_{item['id']}", label_visibility="hidden")
+            if checked_state:
+                if 'selected_test_items' not in st.session_state:
+                    st.session_state['selected_test_items'] = []
+                if item['id'] not in st.session_state['selected_test_items']:
+                    st.session_state['selected_test_items'].append(item['id'])
+            else:
+                if 'selected_test_items' in st.session_state and item['id'] in st.session_state['selected_test_items']:
+                    st.session_state['selected_test_items'].remove(item['id'])
         row += "</td>"
         # Data columns
         row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['id']}</td>"
@@ -43,13 +45,14 @@ def display_test_table():
         row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'}; color: {'green' if item['status'] == 'Active' else 'red'};'>{item['status']}</td>"
         # Actions column
         row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>"
-        row += f"<i class='far fa-edit' style='font-size: 13px; color: black; margin-right: 5px; cursor: pointer;'></i>"
-        row += f"<i class='far fa-trash-alt' style='font-size: 13px; color: black; cursor: pointer;'></i>"
-        if st.button("", key=f"edit_{item['id']}", help="Edit"):
-            st.session_state[f"edit_{item['id']}"] = True
-        if st.button("", key=f"delete_{item['id']}", help="Delete"):
-            st.session_state['test_data'] = [d for d in st.session_state['test_data'] if d['id'] != item['id']]
-            st.rerun()
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("✏️", key=f"edit_{item['id']}", help="Edit"):
+                st.session_state[f"edit_{item['id']}"] = True
+        with col2:
+            if st.button("🗑️", key=f"delete_{item['id']}", help="Delete"):
+                st.session_state['test_data'] = [d for d in st.session_state['test_data'] if d['id'] != item['id']]
+                st.rerun()
         row += "</td>"
         row += "</tr>"
         st.markdown(row, unsafe_allow_html=True)
