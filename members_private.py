@@ -246,52 +246,6 @@ def display_members_private():
         ]
         render_table(completed_activities, columns, key="download_completed_activities")
 
-        # Add Edit and Delete buttons for each row
-        for idx, activity in enumerate(completed_activities):
-            col1, col2, col3 = st.columns([8, 1, 1])
-            with col2:
-                if st.button("Edit", key=f"edit_completed_{activity['id']}_{idx}", help="Edit"):
-                    st.session_state[f"edit_completed_{activity['id']}_active"] = True
-            with col3:
-                if st.button("Delete", key=f"delete_completed_{activity['id']}_{idx}", help="Delete"):
-                    st.session_state[f"delete_completed_{activity['id']}_confirm"] = True
-
-            if st.session_state.get(f"edit_completed_{activity['id']}_active"):
-                with st.form(key=f"edit_completed_form_{activity['id']}"):
-                    st.subheader(f"Edit Completed Activity: {activity['activity']}")
-                    new_activity_type = st.text_input("Activity Type", value=activity['activity'])
-                    new_activity_date = st.text_input("Date (YYYY-MM-DD)", value=activity['date'])
-                    new_activity_amount = st.text_input("Amount (optional)", value=activity['amount'] if activity['amount'] else "")
-                    edit_submit = st.form_submit_button("Save Changes")
-                    if edit_submit:
-                        old_activity_type = activity['activity']
-                        for act in st.session_state['activities']:
-                            if act['id'] == activity['id']:
-                                act['activity'] = new_activity_type
-                                act['date'] = new_activity_date
-                                act['amount'] = new_activity_amount if new_activity_amount else None
-                                break
-                        log_action("Edit Completed Activity", activity['id'], f"Edited completed activity: {old_activity_type} to {new_activity_type}")
-                        st.success("Activity updated successfully!")
-                        st.session_state[f"edit_completed_{activity['id']}_active"] = False
-                        st.rerun()
-
-            if st.session_state.get(f"delete_completed_{activity['id']}_confirm"):
-                with st.form(key=f"delete_completed_form_{activity['id']}"):
-                    st.subheader(f"Delete Completed Activity: {activity['activity']}")
-                    st.write("Are you sure you want to permanently delete this activity? This action cannot be undone.")
-                    confirm_delete = st.text_input("Type the activity name to confirm", placeholder=activity['activity'])
-                    delete_submit = st.form_submit_button("Confirm Delete")
-                    if delete_submit:
-                        if confirm_delete == activity['activity']:
-                            st.session_state['activities'] = [act for act in st.session_state['activities'] if act['id'] != activity['id']]
-                            log_action("Delete Completed Activity", activity['id'], f"Permanently deleted completed activity: {activity['activity']}")
-                            st.success("Activity permanently deleted!")
-                            st.session_state[f"delete_completed_{activity['id']}_confirm"] = False
-                            st.rerun()
-                        else:
-                            st.error("Activity name does not match. Deletion cancelled.")
-
         st.markdown("</div>", unsafe_allow_html=True)
 
     # Related Assets tab
