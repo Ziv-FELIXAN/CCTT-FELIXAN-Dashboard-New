@@ -1,7 +1,7 @@
 import streamlit as st
 from general_ui import setup_general_ui, setup_version_management
 from styling import apply_styling
-from test_table import display_test_table
+from members_private import display_members_private
 
 st.set_page_config(layout="wide")
 
@@ -9,7 +9,9 @@ conn, c, current_version = setup_general_ui()
 
 apply_styling()
 
-display_test_table()
+if 'tabs' not in st.session_state:
+    st.session_state['tabs'] = st.tabs(["Overview", "Manage Objects", "Checklist", "Related Assets", "Log"])
+display_members_private()
 
 st.markdown(
     f"<div style='background-color: #f1f1f1; padding: 10px; text-align: center; margin-top: 20px;'>"
