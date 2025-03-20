@@ -8,7 +8,7 @@ def display_test_table():
             {'id': 3, 'name': 'Item 3', 'value': '$300', 'status': 'Active'}
         ]
 
-    # Custom CSS for the table
+    # Custom CSS for the table and buttons
     st.markdown(
         """
         <style>
@@ -43,7 +43,7 @@ def display_test_table():
             background-color: #FF0000;
             color: black;
         }
-        .custom-table .action-button {
+        .custom-button {
             height: 20px;
             font-size: 12px;
             padding: 0px 5px;
@@ -55,8 +55,11 @@ def display_test_table():
             border: 1px solid #ccc;
             cursor: pointer;
             transition: background-color 0.3s;
+            display: inline-block;
+            text-decoration: none;
+            color: black;
         }
-        .custom-table .action-button:hover {
+        .custom-button:hover {
             background-color: #d0d0d0;
         }
         </style>
@@ -93,18 +96,17 @@ def display_test_table():
         table_html += f"<td>{item['name']}</td>"
         table_html += f"<td>{item['value']}</td>"
         table_html += f"<td class='status-{'active' if item['status'] == 'Active' else 'inactive'}'>{item['status']}</td>"
-        # Edit and Delete buttons using st.form
-        table_html += "<td>"
-        with st.form(key=f"edit_form_inline_{item['id']}_{idx}", clear_on_submit=True):
-            if st.form_submit_button("Edit", use_container_width=True):
-                st.session_state[f"edit_{item['id']}_active"] = True
-        table_html += "</td>"
-        table_html += "<td>"
-        with st.form(key=f"delete_form_inline_{item['id']}_{idx}", clear_on_submit=True):
-            if st.form_submit_button("Delete", use_container_width=True):
-                st.session_state[f"delete_{item['id']}_confirm"] = True
-        table_html += "</td>"
+        # Edit button
+        table_html += f"<td><a href='#' class='custom-button' id='edit_{item['id']}_{idx}'>Edit</a></td>"
+        # Delete button
+        table_html += f"<td><a href='#' class='custom-button' id='delete_{item['id']}_{idx}'>Delete</a></td>"
         table_html += "</tr>"
+
+        # Hidden Streamlit buttons to trigger actions
+        if st.button("", key=f"edit_{item['id']}_{idx}", help="Edit"):
+            st.session_state[f"edit_{item['id']}_active"] = True
+        if st.button("", key=f"delete_{item['id']}_{idx}", help="Delete"):
+            st.session_state[f"delete_{item['id']}_confirm"] = True
 
         if st.session_state.get(f"edit_{item['id']}_active"):
             with st.form(key=f"edit_form_{item['id']}"):
