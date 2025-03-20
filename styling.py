@@ -9,14 +9,27 @@ def apply_styling():
         unsafe_allow_html=True
     )
 
-    # Very simple CSS to test if styling is applied
+    # CSS with specific styles
     st.markdown(
         """
         <style>
-        /* Apply a simple style to all text to test if CSS loads */
+        /* Keep the green color to confirm CSS is loading */
         * {
-            color: green !important; /* Change all text to green to test */
-            font-size: 16px !important; /* Change font size to 16px to test */
+            color: green !important;
+        }
+        /* Specific font size for text in div and p elements */
+        div, p {
+            font-size: 16px !important; /* Test font size for div and p elements */
+        }
+        /* Specific styling for tabs */
+        div[data-baseweb="tab"] {
+            font-size: 14px !important; /* Smaller font for tabs */
+            padding: 2px 8px !important; /* Smaller padding for tabs */
+            border-radius: 4px !important;
+        }
+        div[data-baseweb="tab"][aria-selected="true"] {
+            background-color: #E74C3C !important; /* Red for active tab */
+            color: white !important;
         }
         </style>
         """,
