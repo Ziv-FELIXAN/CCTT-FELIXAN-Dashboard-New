@@ -24,8 +24,10 @@ def display_test_table():
 
         for idx, item in enumerate(st.session_state['test_data']):
             row = "<tr>"
+            # Checkbox column
             checked = 'checked' if item['id'] in st.session_state.get('selected_test_items', []) else ''
             row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>"
+            row += f"<input type='checkbox' {checked} id='select_{item['id']}_{idx}' style='width: 13px; height: 13px;'>"
             checked_state = st.checkbox("", value=item['id'] in st.session_state.get('selected_test_items', []), key=f"select_{item['id']}_{idx}", label_visibility="hidden")
             if checked_state:
                 if 'selected_test_items' not in st.session_state:
@@ -36,6 +38,7 @@ def display_test_table():
                 if 'selected_test_items' in st.session_state and item['id'] in st.session_state['selected_test_items']:
                     st.session_state['selected_test_items'].remove(item['id'])
             row += "</td>"
+            # Data columns
             row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['id']}</td>"
             row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['name']}</td>"
             row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['value']}</td>"
@@ -46,7 +49,7 @@ def display_test_table():
         table_html += "</table>"
         st.markdown(table_html, unsafe_allow_html=True)
 
-    # Add Edit and Delete buttons to the right of the table
+    # Add Edit and Delete buttons to the right of the table (one pair per row)
     for idx, item in enumerate(st.session_state['test_data']):
         col1, col2, col3 = st.columns([8, 1, 1])
         with col2:
