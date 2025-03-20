@@ -17,9 +17,10 @@ def display_test_table():
     # Convert test_data to DataFrame
     df = pd.DataFrame(st.session_state['test_data'])
     df['Select'] = [False] * len(df)  # Add a Select column for checkboxes
-    df['Actions'] = [''] * len(df)  # Add an Actions column for Edit/Delete icons
+    df['Edit'] = ['Edit'] * len(df)   # Add an Edit column
+    df['Delete'] = ['Delete'] * len(df)  # Add a Delete column
 
-    # Display the DataFrame with checkboxes and icons
+    # Display the DataFrame with checkboxes and buttons
     edited_df = st.data_editor(
         df,
         column_config={
@@ -28,22 +29,20 @@ def display_test_table():
             "name": st.column_config.TextColumn("Name", disabled=True),
             "value": st.column_config.TextColumn("Value", disabled=True),
             "status": st.column_config.TextColumn("Status", disabled=True),
-            "Actions": st.column_config.Column("Actions", disabled=True)
+            "Edit": st.column_config.TextColumn("Edit", disabled=True),
+            "Delete": st.column_config.TextColumn("Delete", disabled=True)
         },
         hide_index=True,
         use_container_width=True,
         num_rows="fixed"
     )
 
-    # Add Edit and Delete icons in the Actions column
+    # Handle Edit and Delete actions
     for idx, item in enumerate(st.session_state['test_data']):
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("✏️", key=f"edit_icon_{item['id']}_{idx}", help="Edit"):
-                st.session_state[f"edit_{item['id']}_active"] = True
-        with col2:
-            if st.button("🗑️", key=f"delete_icon_{item['id']}_{idx}", help="Delete"):
-                st.session_state[f"delete_{item['id']}_confirm"] = True
+        if edited_df.iloc[idx]['Edit'] == 'Edit' and st.button("Edit", key=f"edit_button_{item['id']}_{idx}", help="Edit"):
+            st.session_state[f"edit_{item['id']}_active"] = True
+        if edited_df.iloc[idx]['Delete'] == 'Delete' and st.button("Delete", key=f"delete_button_{item['id']}_{idx}", help="Delete"):
+            st.session_state[f"delete_{item['id']}_confirm"] = True
 
         if st.session_state.get(f"edit_{item['id']}_active"):
             with st.form(key=f"edit_form_{item['id']}"):
