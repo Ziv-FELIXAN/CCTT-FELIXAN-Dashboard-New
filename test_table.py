@@ -62,7 +62,7 @@ def display_test_table():
             border-collapse: collapse;
             font-family: Arial, sans-serif;
         }
-        .button-table td {
+        .button-table th, .button-table td {
             padding: 0;
             height: 44px;
             line-height: 44px;
@@ -134,53 +134,51 @@ def display_test_table():
                 button_table_html += "<tr>"
                 button_table_html += "<td>"
                 button_table_html += "<div class='button-pair'>"
-                with st.container():
-                    col_edit, col_delete = st.columns([1, 1])
-                    with col_edit:
-                        if st.button("Edit", key=f"edit_{item['id']}_{idx}", help="Edit", use_container_width=True):
-                            st.session_state[f"edit_{item['id']}_active"] = True
-                    with col_delete:
-                        if st.button("Delete", key=f"delete_{item['id']}_{idx}", help="Delete", use_container_width=True):
-                            st.session_state[f"delete_{item['id']}_confirm"] = True
+                button_table_html += f"<a href='#' class='custom-button' id='edit_{item['id']}_{idx}'>Edit</a>"
+                button_table_html += f"<a href='#' class='custom-button' id='delete_{item['id']}_{idx}'>Delete</a>"
                 button_table_html += "</div>"
                 button_table_html += "</td>"
                 button_table_html += "</tr>"
+
+                # Hidden Streamlit buttons to trigger actions
+                if st.button("", key=f"edit_{item['id']}_{idx}", help="Edit"):
+                    st.session_state[f"edit_{item['id']}_active"] = True
+                if st.button("", key=f"delete_{item['id']}_{idx}", help="Delete"):
+                    st.session_state[f"delete_{item['id']}_confirm"] = True
+
+                if st.session_state.get(f"edit_{item['id']}_active"):
+                    with st.form(key=f"edit_form_{item['id']}"):
+                        st.markdown(f"<h3 style='color: black; font-size: 16px;'>Edit Item: {item['name']}</h3>", unsafe_allow_html=True)
+                        new_name = st.text_input("Name", value=item['name'])
+                        new_value = st.text_input("Value", value=item['value'])
+                        new_status = st.selectbox("Status", ["Active", "Inactive"], index=0 if item['status'] == "Active" else 1)
+                        edit_submit = st.form_submit_button("Save Changes")
+                        if edit_submit:
+                            for d in st.session_state['test_data']:
+                                if d['id'] == item['id']:
+                                    d['name'] = new_name
+                                    d['value'] = new_value
+                                    d['status'] = new_status
+                                    break
+                            st.session_state[f"edit_{item['id']}_active"] = False
+                            st.rerun()
+
+                if st.session_state.get(f"delete_{item['id']}_confirm"):
+                    with st.form(key=f"delete_form_{item['id']}"):
+                        st.markdown(f"<h3 style='color: black; font-size: 16px;'>Delete Item: {item['name']}</h3>", unsafe_allow_html=True)
+                        st.markdown("<p style='color: black; font-size: 14px;'>Are you sure you want to delete this item? This action cannot be undone.</p>", unsafe_allow_html=True)
+                        confirm_delete = st.text_input("Type the item name to confirm", placeholder=item['name'])
+                        delete_submit = st.form_submit_button("Confirm Delete")
+                        if delete_submit:
+                            if confirm_delete == item['name']:
+                                st.session_state['test_data'] = [d for d in st.session_state['test_data'] if d['id'] != item['id']]
+                                st.session_state[f"delete_{item['id']}_confirm"] = False
+                                st.rerun()
+                            else:
+                                st.error("Item name does not match. Deletion cancelled.")
+                                st.session_state[f"delete_{item['id']}_confirm"] = False
 
             button_table_html += "</table>"
             st.markdown(button_table_html, unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
-
-        # Handle Edit and Delete actions
-        for idx, item in enumerate(st.session_state['test_data']):
-            if st.session_state.get(f"edit_{item['id']}_active"):
-                with st.form(key=f"edit_form_{item['id']}"):
-                    st.markdown(f"<h3 style='color: black; font-size: 16px;'>Edit Item: {item['name']}</h3>", unsafe_allow_html=True)
-                    new_name = st.text_input("Name", value=item['name'])
-                    new_value = st.text_input("Value", value=item['value'])
-                    new_status = st.selectbox("Status", ["Active", "Inactive"], index=0 if item['status'] == "Active" else 1)
-                    edit_submit = st.form_submit_button("Save Changes")
-                    if edit_submit:
-                        for d in st.session_state['test_data']:
-                            if d['id'] == item['id']:
-                                d['name'] = new_name
-                                d['value'] = new_value
-                                d['status'] = new_status
-                                break
-                        st.session_state[f"edit_{item['id']}_active"] = False
-                        st.rerun()
-
-            if st.session_state.get(f"delete_{item['id']}_confirm"):
-                with st.form(key=f"delete_form_{item['id']}"):
-                    st.markdown(f"<h3 style='color: black; font-size: 16px;'>Delete Item: {item['name']}</h3>", unsafe_allow_html=True)
-                    st.markdown("<p style='color: black; font-size: 14px;'>Are you sure you want to delete this item? This action cannot be undone.</p>", unsafe_allow_html=True)
-                    confirm_delete = st.text_input("Type the item name to confirm", placeholder=item['name'])
-                    delete_submit = st.form_submit_button("Confirm Delete")
-                    if delete_submit:
-                        if confirm_delete == item['name']:
-                            st.session_state['test_data'] = [d for d in st.session_state['test_data'] if d['id'] != item['id']]
-                            st.session_state[f"delete_{item['id']}_confirm"] = False
-                            st.rerun()
-                        else:
-                            st.error("Item name does not match. Deletion cancelled.")
-                            st.session_state[f"delete_{item['id']}_confirm"] = False
