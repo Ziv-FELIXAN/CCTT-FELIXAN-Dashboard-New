@@ -1,5 +1,4 @@
 import streamlit as st
-from custom_button import custom_button
 
 def display_test_table():
     if 'test_data' not in st.session_state:
@@ -44,6 +43,22 @@ def display_test_table():
             background-color: #FF0000;
             color: black;
         }
+        .custom-table .action-button {
+            height: 20px;
+            font-size: 12px;
+            padding: 0px 5px;
+            border-radius: 0px;
+            line-height: 20px;
+            width: 60px;
+            text-align: center;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .custom-table .action-button:hover {
+            background-color: #d0d0d0;
+        }
         </style>
         """,
         unsafe_allow_html=True
@@ -78,30 +93,16 @@ def display_test_table():
         table_html += f"<td>{item['name']}</td>"
         table_html += f"<td>{item['value']}</td>"
         table_html += f"<td class='status-{'active' if item['status'] == 'Active' else 'inactive'}'>{item['status']}</td>"
-        # Edit and Delete buttons using custom_button
+        # Edit and Delete buttons using st.form
         table_html += "<td>"
-        custom_button(
-            label="Edit",
-            key=f"edit_{item['id']}_{idx}",
-            action=lambda: st.session_state.update({f"edit_{item['id']}_active": True}),
-            width="60px",
-            height="20px",
-            font_size="12px",
-            bg_color="#e0e0e0",
-            hover_color="#d0d0d0"
-        )
+        with st.form(key=f"edit_form_inline_{item['id']}_{idx}", clear_on_submit=True):
+            if st.form_submit_button("Edit", use_container_width=True):
+                st.session_state[f"edit_{item['id']}_active"] = True
         table_html += "</td>"
         table_html += "<td>"
-        custom_button(
-            label="Delete",
-            key=f"delete_{item['id']}_{idx}",
-            action=lambda: st.session_state.update({f"delete_{item['id']}_confirm": True}),
-            width="60px",
-            height="20px",
-            font_size="12px",
-            bg_color="#e0e0e0",
-            hover_color="#d0d0d0"
-        )
+        with st.form(key=f"delete_form_inline_{item['id']}_{idx}", clear_on_submit=True):
+            if st.form_submit_button("Delete", use_container_width=True):
+                st.session_state[f"delete_{item['id']}_confirm"] = True
         table_html += "</td>"
         table_html += "</tr>"
 
