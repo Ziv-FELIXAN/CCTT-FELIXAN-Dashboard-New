@@ -1,7 +1,6 @@
 import streamlit as st
 
 def display_test_table():
-    # Initialize session state for test data
     if 'test_data' not in st.session_state:
         st.session_state['test_data'] = [
             {'id': 1, 'name': 'Item 1', 'value': '$100', 'status': 'Active'},
@@ -9,7 +8,6 @@ def display_test_table():
             {'id': 3, 'name': 'Item 3', 'value': '$300', 'status': 'Active'}
         ]
 
-    # Display table with inline styles
     st.markdown(
         "<h3 style='color: black; font-size: 16px;'>Test Table</h3>",
         unsafe_allow_html=True
@@ -17,21 +15,36 @@ def display_test_table():
 
     table_html = "<table style='width: 100%; border-collapse: collapse; margin-top: 5px; border: 1px solid #E0E0E0;'>"
     header = "<tr>"
-    headers = ["ID", "Name", "Value", "Status", "Actions"]
+    headers = ["Select", "ID", "Name", "Value", "Status", "Actions"]
     for header_name in headers:
-        header += f"<th style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 13px; background-color: #f1f1f1; font-weight: 500;'>{header_name}</th>"
+        header += f"<th style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: #f1f1f1; font-weight: 500;'>{header_name}</th>"
     header += "</tr>"
     table_html += header
 
     for idx, item in enumerate(st.session_state['test_data']):
         row = "<tr>"
-        row += f"<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['id']}</td>"
-        row += f"<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['name']}</td>"
-        row += f"<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['value']}</td>"
-        row += f"<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'}; color: {'green' if item['status'] == 'Active' else 'red'};'>{item['status']}</td>"
-        row += f"<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>"
-        row += f"<button style='background: none; border: none; cursor: pointer; font-size: 13px; padding: 2px; margin: 0 2px;' title='Edit'><i class='far fa-edit'></i></button>"
-        row += f"<button style='background: none; border: none; cursor: pointer; font-size: 13px; padding: 2px; margin: 0 2px;' title='Delete'><i class='far fa-trash-alt'></i></button>"
+        # Checkbox column
+        checked = 'checked' if item['id'] in st.session_state.get('selected_test_items', []) else ''
+        row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>"
+        checked_state = st.checkbox("", value=item['id'] in st.session_state.get('selected_test_items', []), key=f"select_{item['id']}", label_visibility="hidden")
+        if checked_state:
+            if 'selected_test_items' not in st.session_state:
+                st.session_state['selected_test_items'] = []
+            if item['id'] not in st.session_state['selected_test_items']:
+                st.session_state['selected_test_items'].append(item['id'])
+        else:
+            if 'selected_test_items' in st.session_state and item['id'] in st.session_state['selected_test_items']:
+                st.session_state['selected_test_items'].remove(item['id'])
+        row += "</td>"
+        # Data columns
+        row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['id']}</td>"
+        row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['name']}</td>"
+        row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['value']}</td>"
+        row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'}; color: {'green' if item['status'] == 'Active' else 'red'};'>{item['status']}</td>"
+        # Actions column
+        row += f"<td style='border: 1px solid #E0E0E0; padding: 2px; text-align: left; font-size: 13px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>"
+        row += f"<i class='far fa-edit' style='font-size: 13px; color: black; margin-right: 5px; cursor: pointer;'></i>"
+        row += f"<i class='far fa-trash-alt' style='font-size: 13px; color: black; cursor: pointer;'></i>"
         if st.button("", key=f"edit_{item['id']}", help="Edit"):
             st.session_state[f"edit_{item['id']}"] = True
         if st.button("", key=f"delete_{item['id']}", help="Delete"):
@@ -44,7 +57,6 @@ def display_test_table():
     table_html += "</table>"
     st.markdown(table_html, unsafe_allow_html=True)
 
-    # Edit form
     for item in st.session_state['test_data']:
         if st.session_state.get(f"edit_{item['id']}"):
             with st.form(key=f"edit_form_{item['id']}"):
