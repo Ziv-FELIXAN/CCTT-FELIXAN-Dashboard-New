@@ -9,16 +9,18 @@ def apply_styling():
         unsafe_allow_html=True
     )
 
-    # Custom CSS for tabs, tables, and cards
+    # Simplified CSS with a clear test style (background color)
     st.markdown(
         """
         <style>
-        /* General styling */
+        /* Test style to verify if CSS is loading */
         body {
+            background-color: #f0f8ff; /* Light blue background to test if CSS loads */
             font-family: 'Arial', sans-serif;
-            font-size: 25px;
+            font-size: 14px; /* Slightly larger font for testing */
             color: #333;
         }
+        /* Basic styling for headers */
         h3 {
             font-size: 16px;
             font-weight: 500;
@@ -29,44 +31,7 @@ def apply_styling():
             font-weight: 500;
             margin-bottom: 5px;
         }
-        .stButton>button {
-            font-size: 13px;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        .stSelectbox, .stTextInput {
-            font-size: 13px;
-        }
-        /* Tabs styling */
-        .stTabs [data-baseweb="tab-list"] {
-            background-color: #f5f5f5;
-            padding: 2px;
-            border-radius: 4px;
-        }
-        .stTabs [data-baseweb="tab"] {
-            padding: 4px 12px;
-            margin: 0 2px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        /* Active tab color based on user type */
-        .stTabs [data-baseweb="tab"][aria-selected="true"] {
-            background-color: #2C3E50; /* Default for Management */
-            color: white;
-        }
-        .stTabs [data-baseweb="tab"] {
-            background-color: #2C3E5080; /* 50% opacity for non-active tabs */
-            color: #333;
-        }
-        /* Override for Private (red) */
-        [data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"] {
-            background-color: #E74C3C !important; /* Red for Private */
-        }
-        [data-testid="stTabs"] [data-baseweb="tab"] {
-            background-color: #E74C3C80 !important; /* 50% opacity for non-active tabs */
-        }
-        /* Table styling */
+        /* Simplified table styling */
         .custom-table {
             width: 100%;
             border-collapse: collapse;
@@ -77,7 +42,7 @@ def apply_styling():
             border: 1px solid #E0E0E0;
             padding: 4px;
             text-align: left;
-            font-size: 13px;
+            font-size: 14px;
         }
         .custom-table th {
             background-color: #f1f1f1;
@@ -86,7 +51,7 @@ def apply_styling():
         .custom-table tr:nth-child(even) {
             background-color: #F5F5F5;
         }
-        /* Card styling for Overview */
+        /* Simplified card styling */
         .overview-card {
             background-color: #F5F5F5;
             border: 1px solid #E0E0E0;
@@ -103,21 +68,21 @@ def apply_styling():
         }
         .overview-card p {
             margin: 0;
-            font-size: 13px;
+            font-size: 14px;
         }
-        /* Button styling for icons */
+        /* Simplified button styling */
         .icon-button {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             padding: 2px;
             margin: 0 2px;
         }
         /* Checkbox styling */
         input[type="checkbox"] {
-            width: 13px;
-            height: 13px;
+            width: 14px;
+            height: 14px;
         }
         /* Container styling */
         .module-content {
