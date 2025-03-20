@@ -8,12 +8,19 @@ def display_test_table():
             {'id': 3, 'name': 'Item 3', 'value': '$300', 'status': 'Active'}
         ]
 
-    # Custom CSS for the table and buttons
+    # Custom CSS to limit the stage width to 1200px and style the table
     st.markdown(
         """
         <style>
+        .main .block-container {
+            max-width: 1200px;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
         .custom-table {
-            width: 50%;
+            width: 100%;
             border-collapse: collapse;
             border: 2px solid #E0E0E0;
             font-family: Arial, sans-serif;
@@ -96,9 +103,8 @@ def display_test_table():
         table_html += f"<td>{item['name']}</td>"
         table_html += f"<td>{item['value']}</td>"
         table_html += f"<td class='status-{'active' if item['status'] == 'Active' else 'inactive'}'>{item['status']}</td>"
-        # Edit button
+        # Edit and Delete buttons
         table_html += f"<td><a href='#' class='custom-button' id='edit_{item['id']}_{idx}'>Edit</a></td>"
-        # Delete button
         table_html += f"<td><a href='#' class='custom-button' id='delete_{item['id']}_{idx}'>Delete</a></td>"
         table_html += "</tr>"
 
