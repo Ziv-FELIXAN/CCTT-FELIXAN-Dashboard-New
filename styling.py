@@ -16,7 +16,7 @@ def apply_styling():
         /* General styling */
         body {
             font-family: 'Arial', sans-serif;
-            font-size: 13px;
+            font-size: 25px;
             color: #333;
         }
         h3 {
