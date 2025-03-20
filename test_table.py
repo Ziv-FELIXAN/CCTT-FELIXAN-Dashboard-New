@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit.components.v1 as components
+from custom_button import custom_button
 
 def display_test_table():
     if 'test_data' not in st.session_state:
@@ -9,7 +9,7 @@ def display_test_table():
             {'id': 3, 'name': 'Item 3', 'value': '$300', 'status': 'Active'}
         ]
 
-    # Custom CSS for full control over the table and buttons
+    # Custom CSS for the table
     st.markdown(
         """
         <style>
@@ -43,22 +43,6 @@ def display_test_table():
         .custom-table .status-inactive {
             background-color: #FF0000;
             color: black;
-        }
-        .custom-button {
-            height: 20px;
-            font-size: 12px;
-            padding: 0px 5px;
-            border-radius: 0px;
-            line-height: 20px;
-            width: 60px;
-            text-align: center;
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .custom-button:hover {
-            background-color: #d0d0d0;
         }
         </style>
         """,
@@ -94,16 +78,32 @@ def display_test_table():
         table_html += f"<td>{item['name']}</td>"
         table_html += f"<td>{item['value']}</td>"
         table_html += f"<td class='status-{'active' if item['status'] == 'Active' else 'inactive'}'>{item['status']}</td>"
-        # Edit and Delete buttons
-        table_html += f"<td><button class='custom-button' onclick='document.getElementById(\"edit_{item['id']}_{idx}\").click();'>Edit</button></td>"
-        table_html += f"<td><button class='custom-button' onclick='document.getElementById(\"delete_{item['id']}_{idx}\").click();'>Delete</button></td>"
+        # Edit and Delete buttons using custom_button
+        table_html += "<td>"
+        custom_button(
+            label="Edit",
+            key=f"edit_{item['id']}_{idx}",
+            action=lambda: st.session_state.update({f"edit_{item['id']}_active": True}),
+            width="60px",
+            height="20px",
+            font_size="12px",
+            bg_color="#e0e0e0",
+            hover_color="#d0d0d0"
+        )
+        table_html += "</td>"
+        table_html += "<td>"
+        custom_button(
+            label="Delete",
+            key=f"delete_{item['id']}_{idx}",
+            action=lambda: st.session_state.update({f"delete_{item['id']}_confirm": True}),
+            width="60px",
+            height="20px",
+            font_size="12px",
+            bg_color="#e0e0e0",
+            hover_color="#d0d0d0"
+        )
+        table_html += "</td>"
         table_html += "</tr>"
-
-        # Hidden Streamlit buttons to trigger actions
-        if st.button("", key=f"edit_{item['id']}_{idx}", help="Edit"):
-            st.session_state[f"edit_{item['id']}_active"] = True
-        if st.button("", key=f"delete_{item['id']}_{idx}", help="Delete"):
-            st.session_state[f"delete_{item['id']}_confirm"] = True
 
         if st.session_state.get(f"edit_{item['id']}_active"):
             with st.form(key=f"edit_form_{item['id']}"):
