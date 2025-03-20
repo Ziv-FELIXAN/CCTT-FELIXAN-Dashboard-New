@@ -1,25 +1,26 @@
 import streamlit as st
 
 def render_table(data, columns, actions=None, actions_field=None, checkbox_key=None, key=None):
-    """Render a custom table with optional actions, checkboxes, and a unique key for the download button."""
-    st.markdown("<table class='custom-table'>", unsafe_allow_html=True)
+    # Render a custom table with inline styles
+    table_html = "<table style='width: 100%; border-collapse: collapse; margin-top: 5px; border: 1px solid #E0E0E0;'>"
     # Table header
     header = "<tr>"
     if checkbox_key:
-        header += "<th>Select</th>"
+        header += "<th style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 14px; background-color: #f1f1f1; font-weight: 500;'>Select</th>"
     for col in columns:
-        header += f"<th>{col['name']}</th>"
+        header += f"<th style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 14px; background-color: #f1f1f1; font-weight: 500;'>{col['name']}</th>"
     if actions or actions_field:
-        header += "<th>Actions</th>"
+        header += "<th style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 14px; background-color: #f1f1f1; font-weight: 500;'>Actions</th>"
     header += "</tr>"
-    st.markdown(header, unsafe_allow_html=True)
+    table_html += header
+    st.markdown(table_html, unsafe_allow_html=True)
 
     # Table rows
-    for item in data:
+    for idx, item in enumerate(data):
         row = "<tr>"
         if checkbox_key:
             checked = 'checked' if item['id'] in st.session_state.get(checkbox_key, []) else ''
-            row += f"<td><input type='checkbox' {checked} id='{checkbox_key}_{item['id']}'></td>"
+            row += f"<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 14px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'><input type='checkbox' {checked} id='{checkbox_key}_{item['id']}'></td>"
             checked_state = st.checkbox("", value=item['id'] in st.session_state.get(checkbox_key, []), key=f"{checkbox_key}_{item['id']}", label_visibility="hidden")
             if checked_state:
                 if checkbox_key not in st.session_state:
@@ -35,15 +36,14 @@ def render_table(data, columns, actions=None, actions_field=None, checkbox_key=N
                 value = col['format'](item)
             if col.get('style'):
                 style = col['style'](item) if callable(col['style']) else col['style']
-                row += f"<td style='{style}'>{value}</td>"
+                row += f"<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 14px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'}; {style}'>{value}</td>"
             else:
-                row += f"<td>{value}</td>"
+                row += f"<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 14px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{value}</td>"
         if actions or actions_field:
-            row += "<td>"
+            row += "<td style='border: 1px solid #E0E0E0; padding: 4px; text-align: left; font-size: 14px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>"
             current_actions = item.get(actions_field, []) if actions_field else actions
             for action in current_actions:
-                row += f"<button class='icon-button' title='{action['title']}'><i class='{action['icon']}'></i></button>"
-                # Set session state when the action is triggered
+                row += f"<button style='background: none; border: none; cursor: pointer; font-size: 14px; padding: 2px; margin: 0 2px;' title='{action['title']}'><i class='{action['icon']}'></i></button>"
                 if st.button("", key=action['action'], help=action['title']):
                     st.session_state[action['action']] = True
             row += "</td>"
@@ -51,7 +51,7 @@ def render_table(data, columns, actions=None, actions_field=None, checkbox_key=N
         st.markdown(row, unsafe_allow_html=True)
     st.markdown("</table>", unsafe_allow_html=True)
 
-    # Add CSV download button with an icon
+    # Add CSV download button with inline styles
     if data:
         csv = "\n".join([",".join([col['name'] for col in columns])] + [",".join([str(item.get(col['field'], 'N/A')) for col in columns]) for item in data])
         st.download_button(
@@ -64,17 +64,15 @@ def render_table(data, columns, actions=None, actions_field=None, checkbox_key=N
         )
 
 def render_summary_card(icon, title, value):
-    """Render a summary card for the Overview tab."""
     st.markdown(
-        f"<div class='overview-card'>"
-        f"<i class='{icon}'></i>"
-        f"<p>{title}: {value}</p>"
+        f"<div style='background-color: #F5F5F5; border: 1px solid #E0E0E0; border-radius: 4px; padding: 8px; margin: 4px 0; display: flex; align-items: center; gap: 6px;'>"
+        f"<i class='{icon}' style='font-size: 14px; color: #666;'></i>"
+        f"<p style='margin: 0; font-size: 14px; color: black;'>{title}: {value}</p>"
         "</div>",
         unsafe_allow_html=True
     )
 
 def render_filter(types, objects, type_key, object_key, type_label="Select Object Type", object_label="Select Object"):
-    """Render a filter with two dropdowns."""
     selected_type = st.selectbox(type_label, types, key=type_key, label_visibility="visible")
     filtered_objects = [obj for obj in objects if selected_type.lower() in obj['activity'].lower()]
     object_ids = [obj['id'] for obj in filtered_objects]
@@ -82,9 +80,8 @@ def render_filter(types, objects, type_key, object_key, type_label="Select Objec
     return selected_type, selected_object_id
 
 def render_document_manager(item_id, documents):
-    """Render a document manager for uploading and managing documents."""
     with st.form(key=f"docs_form_{item_id}"):
-        st.subheader(f"Manage Documents")
+        st.markdown("<h3 style='color: black; font-size: 16px;'>Manage Documents</h3>", unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Upload Document", key=f"upload_{item_id}")
         notes = st.text_area("Notes", key=f"notes_{item_id}")
         submit_doc = st.form_submit_button("Add Document")
@@ -93,15 +90,14 @@ def render_document_manager(item_id, documents):
             st.success("Document added successfully!")
             st.rerun()
 
-    # Display uploaded documents
     if documents:
-        st.write("Uploaded Documents:")
+        st.markdown("<h4 style='color: black; font-size: 14px;'>Uploaded Documents:</h4>", unsafe_allow_html=True)
         for doc in documents:
             col1, col2, col3, col4 = st.columns([2, 2, 1, 1])
             with col1:
-                st.write(doc['name'])
+                st.markdown(f"<p style='color: black; font-size: 14px;'>{doc['name']}</p>", unsafe_allow_html=True)
             with col2:
-                st.write(f"Notes: {doc['notes']}")
+                st.markdown(f"<p style='color: black; font-size: 14px;'>Notes: {doc['notes']}</p>", unsafe_allow_html=True)
             with col3:
                 if st.button("Edit", key=f"edit_doc_{item_id}_{doc['name']}"):
                     st.session_state[f"edit_doc_{item_id}_{doc['name']}"] = True
@@ -110,10 +106,9 @@ def render_document_manager(item_id, documents):
                     documents.remove(doc)
                     st.rerun()
 
-            # Edit document notes
             if f"edit_doc_{item_id}_{doc['name']}" in st.session_state and st.session_state[f"edit_doc_{item_id}_{doc['name']}"]:
                 with st.form(key=f"edit_doc_form_{item_id}_{doc['name']}"):
-                    st.subheader(f"Edit Document: {doc['name']}")
+                    st.markdown(f"<h3 style='color: black; font-size: 16px;'>Edit Document: {doc['name']}</h3>", unsafe_allow_html=True)
                     new_notes = st.text_area("Notes", value=doc['notes'], key=f"edit_notes_{item_id}_{doc['name']}")
                     edit_submit = st.form_submit_button("Save Changes")
                     if edit_submit:
@@ -123,7 +118,6 @@ def render_document_manager(item_id, documents):
                         st.rerun()
 
 def render_checklist(items, object_id, log_action):
-    """Render a checklist with steps and document management."""
     object_checklist = [item for item in items if item['object_id'] == object_id]
     total_steps = len(object_checklist)
     completed_steps = sum(1 for item in object_checklist if item['completed'])
@@ -132,7 +126,7 @@ def render_checklist(items, object_id, log_action):
     for i, item in enumerate(object_checklist):
         col1, col2, col3 = st.columns([0.5, 3, 1])
         with col1:
-            st.write(f"{i+1}.")
+            st.markdown(f"<p style='color: black; font-size: 14px;'>{i+1}.</p>", unsafe_allow_html=True)
         with col2:
             checked = st.checkbox(item['step'], value=bool(item['completed']), key=f"checklist_{item['id']}")
             if checked != bool(item['completed']):
@@ -145,9 +139,8 @@ def render_checklist(items, object_id, log_action):
         with col3:
             if st.button("", key=f"docs_{item['id']}", help="Manage Documents"):
                 st.session_state[f"manage_docs_{item['id']}"] = True
-            st.markdown("<i class='far fa-paperclip'></i>", unsafe_allow_html=True)
+            st.markdown("<i class='far fa-paperclip' style='font-size: 14px; color: black;'></i>", unsafe_allow_html=True)
 
-        # Manage documents
         if f"manage_docs_{item['id']}" in st.session_state and st.session_state[f"manage_docs_{item['id']}"]:
             render_document_manager(item['id'], item['documents'])
 
@@ -155,6 +148,6 @@ def render_checklist(items, object_id, log_action):
         "<div style='background-color: #e0e0e0; height: 15px; width: 50%; border-radius: 5px; margin-top: 10px;'>"
         f"<div style='background-color: #E74C3C; height: 15px; width: {progress}%; border-radius: 5px;'></div>"
         "</div>"
-        f"<p style='font-size: 13px; margin-top: 5px;'>Progress: {progress:.0f}%</p>",
+        f"<p style='font-size: 14px; margin-top: 5px; color: black;'>Progress: {progress:.0f}%</p>",
         unsafe_allow_html=True
     )
