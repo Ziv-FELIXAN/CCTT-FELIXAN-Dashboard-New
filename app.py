@@ -9,8 +9,9 @@ st.set_page_config(layout="wide")
 # Setup general UI and version management
 conn, c, current_version = setup_general_ui()
 
-# Apply styling
+# Apply styling and add a test message to confirm it's called
 apply_styling()
+st.write("Styling applied successfully!")  # Test message to confirm apply_styling() is called
 
 # Manage modules
 manage_modules()
