@@ -290,7 +290,7 @@ def display_members_private():
                 {"name": "ID", "field": "id"},
                 {"name": "Description", "field": "description"},
                 {"name": "Details", "field": "date", "format": lambda x: f"{x['date']} | {x['amount']}"},
-                {"name": "Status", "field": "status", "format": lambda x: f"<span style='color: {'green' if x['status'] == 'Active' else 'red'}'>{x['status']}</span>"}
+                {"name": "Status", "field": "status", "style": lambda x: "color: green;" if x['status'] == "Active" else "color: red;"}
             ]
         else:
             items = assets
@@ -298,7 +298,7 @@ def display_members_private():
                 {"name": "ID", "field": "id"},
                 {"name": "Description", "field": "description"},
                 {"name": "Details", "field": "value", "format": lambda x: f"Value: {x['value']}"},
-                {"name": "Status", "field": "status", "format": lambda x: f"<span style='color: {'green' if x['status'] == 'Active' else 'red'}'>{x['status']}</span>"}
+                {"name": "Status", "field": "status", "style": lambda x: "color: green;" if x['status'] == "Active" else "color: red;"}
             ]
 
         render_table(items, columns, key="download_related_assets")
@@ -329,3 +329,4 @@ def display_members_private():
         render_table(st.session_state['action_log'], columns, key="download_log")
 
         st.markdown("</div>", unsafe_allow_html=True)
+        
