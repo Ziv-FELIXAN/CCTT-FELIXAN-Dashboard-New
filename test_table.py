@@ -55,10 +55,15 @@ def display_test_table():
         .button-container {
             display: flex;
             flex-direction: column;
-            gap: 2px;  /* Reduced gap between buttons */
             align-items: center;
             justify-content: center;
             height: 44px;
+        }
+        .button-pair {
+            display: flex;
+            flex-direction: row;
+            gap: 2px;  /* Reduced gap between buttons */
+            margin-bottom: 2px;  /* Reduced margin between button pairs */
         }
         </style>
         """,
@@ -105,13 +110,16 @@ def display_test_table():
         # Add Edit and Delete buttons for each row
         for idx, item in enumerate(st.session_state['test_data']):
             st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)  # Spacer to align with table rows
-            col_edit, col_delete = st.columns([1, 1])
-            with col_edit:
-                if st.button("Edit", key=f"edit_{item['id']}_{idx}", help="Edit", use_container_width=True):
-                    st.session_state[f"edit_{item['id']}_active"] = True
-            with col_delete:
-                if st.button("Delete", key=f"delete_{item['id']}_{idx}", help="Delete", use_container_width=True):
-                    st.session_state[f"delete_{item['id']}_confirm"] = True
+            with st.container():
+                st.markdown("<div class='button-pair'>", unsafe_allow_html=True)
+                col_edit, col_delete = st.columns([1, 1])
+                with col_edit:
+                    if st.button("Edit", key=f"edit_{item['id']}_{idx}", help="Edit", use_container_width=True):
+                        st.session_state[f"edit_{item['id']}_active"] = True
+                with col_delete:
+                    if st.button("Delete", key=f"delete_{item['id']}_{idx}", help="Delete", use_container_width=True):
+                        st.session_state[f"delete_{item['id']}_confirm"] = True
+                st.markdown("</div>", unsafe_allow_html=True)
 
             if st.session_state.get(f"edit_{item['id']}_active"):
                 with st.form(key=f"edit_form_{item['id']}"):
