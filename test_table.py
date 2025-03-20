@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 def display_test_table():
     if 'test_data' not in st.session_state:
@@ -43,7 +44,7 @@ def display_test_table():
             background-color: #FF0000;
             color: black;
         }
-        .custom-table .action-button {
+        .custom-button {
             height: 20px;
             font-size: 12px;
             padding: 0px 5px;
@@ -51,6 +52,13 @@ def display_test_table():
             line-height: 20px;
             width: 60px;
             text-align: center;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .custom-button:hover {
+            background-color: #d0d0d0;
         }
         </style>
         """,
@@ -87,8 +95,8 @@ def display_test_table():
         table_html += f"<td>{item['value']}</td>"
         table_html += f"<td class='status-{'active' if item['status'] == 'Active' else 'inactive'}'>{item['status']}</td>"
         # Edit and Delete buttons
-        table_html += f"<td><button class='action-button' onclick='document.getElementById(\"edit_{item['id']}_{idx}\").click();'>Edit</button></td>"
-        table_html += f"<td><button class='action-button' onclick='document.getElementById(\"delete_{item['id']}_{idx}\").click();'>Delete</button></td>"
+        table_html += f"<td><button class='custom-button' onclick='document.getElementById(\"edit_{item['id']}_{idx}\").click();'>Edit</button></td>"
+        table_html += f"<td><button class='custom-button' onclick='document.getElementById(\"delete_{item['id']}_{idx}\").click();'>Delete</button></td>"
         table_html += "</tr>"
 
         # Hidden Streamlit buttons to trigger actions
@@ -131,4 +139,3 @@ def display_test_table():
 
     table_html += "</table>"
     st.markdown(table_html, unsafe_allow_html=True)
-    
