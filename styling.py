@@ -1,19 +1,46 @@
 import streamlit as st
 
 def apply_styling():
-    # Add Font Awesome for icons
-    st.markdown(
-        """
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Use inline HTML styles instead of CSS
     st.markdown(
         """
         <style>
-        /* Minimal CSS to ensure Font Awesome works */
+        .stButton>button {
+            background-color: #E0E0E0;
+            color: black;
+            border: none;
+            padding: 4px 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .stButton>button:hover {
+            background-color: #D0D0D0;
+        }
+        .stSelectbox>div>div {
+            background-color: #E0E0E0;
+            color: black;
+            border: none;
+            padding: 4px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        .stTextInput>div>input {
+            background-color: #E0E0E0;
+            color: black;
+            border: none;
+            padding: 4px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        .stCheckbox>div {
+            display: flex;
+            align-items: center;
+        }
+        .stCheckbox>div>label {
+            margin-left: 4px;
+            color: black;
+            font-size: 14px;
+        }
         </style>
         """,
         unsafe_allow_html=True
