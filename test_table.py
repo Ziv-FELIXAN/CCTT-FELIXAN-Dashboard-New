@@ -14,17 +14,21 @@ def display_test_table():
         unsafe_allow_html=True
     )
 
-    # Create a container for the table
+    # Create a container for the table with a 2px border
     with st.container():
+        st.markdown(
+            "<div style='border: 2px solid #E0E0E0; padding: 5px;'>",
+            unsafe_allow_html=True
+        )
         # Header row
         col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 1, 2, 2, 2, 1, 1])
-        col1.markdown("<p style='font-size: 13px; font-weight: 500; color: black;'>Select</p>", unsafe_allow_html=True)
-        col2.markdown("<p style='font-size: 13px; font-weight: 500; color: black;'>ID</p>", unsafe_allow_html=True)
-        col3.markdown("<p style='font-size: 13px; font-weight: 500; color: black;'>Name</p>", unsafe_allow_html=True)
-        col4.markdown("<p style='font-size: 13px; font-weight: 500; color: black;'>Value</p>", unsafe_allow_html=True)
-        col5.markdown("<p style='font-size: 13px; font-weight: 500; color: black;'>Status</p>", unsafe_allow_html=True)
-        col6.markdown("<p style='font-size: 13px; font-weight: 500; color: black;'></p>", unsafe_allow_html=True)
-        col7.markdown("<p style='font-size: 13px; font-weight: 500; color: black;'></p>", unsafe_allow_html=True)
+        col1.markdown("<p style='font-size: 13px; font-weight: 500; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: #f1f1f1;'>Select</p>", unsafe_allow_html=True)
+        col2.markdown("<p style='font-size: 13px; font-weight: 500; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: #f1f1f1;'>ID</p>", unsafe_allow_html=True)
+        col3.markdown("<p style='font-size: 13px; font-weight: 500; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: #f1f1f1;'>Name</p>", unsafe_allow_html=True)
+        col4.markdown("<p style='font-size: 13px; font-weight: 500; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: #f1f1f1;'>Value</p>", unsafe_allow_html=True)
+        col5.markdown("<p style='font-size: 13px; font-weight: 500; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: #f1f1f1;'>Status</p>", unsafe_allow_html=True)
+        col6.markdown("<p style='font-size: 13px; font-weight: 500; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: #f1f1f1;'></p>", unsafe_allow_html=True)
+        col7.markdown("<p style='font-size: 13px; font-weight: 500; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: #f1f1f1;'></p>", unsafe_allow_html=True)
 
         # Data rows
         for idx, item in enumerate(st.session_state['test_data']):
@@ -40,18 +44,18 @@ def display_test_table():
                     if 'selected_test_items' in st.session_state and item['id'] in st.session_state['selected_test_items']:
                         st.session_state['selected_test_items'].remove(item['id'])
             with col2:
-                st.markdown(f"<p style='font-size: 13px; color: black; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['id']}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size: 13px; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['id']}</p>", unsafe_allow_html=True)
             with col3:
-                st.markdown(f"<p style='font-size: 13px; color: black; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['name']}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size: 13px; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['name']}</p>", unsafe_allow_html=True)
             with col4:
-                st.markdown(f"<p style='font-size: 13px; color: black; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['value']}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size: 13px; color: black; border: 1px solid #E0E0E0; padding: 2px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['value']}</p>", unsafe_allow_html=True)
             with col5:
-                st.markdown(f"<p style='font-size: 13px; color: {'green' if item['status'] == 'Active' else 'red'}; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['status']}</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size: 13px; color: {'green' if item['status'] == 'Active' else 'red'}; border: 1px solid #E0E0E0; padding: 2px; background-color: {'#F5F5F5' if idx % 2 == 0 else '#FFFFFF'};'>{item['status']}</p>", unsafe_allow_html=True)
             with col6:
-                if st.button("Edit", key=f"edit_button_{item['id']}_{idx}", help="Edit"):
+                if st.button("Edit", key=f"edit_button_{item['id']}_{idx}", help="Edit", use_container_width=True):
                     st.session_state[f"edit_{item['id']}_active"] = True
             with col7:
-                if st.button("Delete", key=f"delete_button_{item['id']}_{idx}", help="Delete"):
+                if st.button("Delete", key=f"delete_button_{item['id']}_{idx}", help="Delete", use_container_width=True):
                     st.session_state[f"delete_{item['id']}_confirm"] = True
 
             if st.session_state.get(f"edit_{item['id']}_active"):
@@ -85,3 +89,5 @@ def display_test_table():
                         else:
                             st.error("Item name does not match. Deletion cancelled.")
                             st.session_state[f"delete_{item['id']}_confirm"] = False
+
+        st.markdown("</div>", unsafe_allow_html=True)
