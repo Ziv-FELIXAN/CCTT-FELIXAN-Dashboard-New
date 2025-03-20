@@ -107,20 +107,19 @@ def display_members_private():
             {"name": "Date", "field": "date"},
             {"name": "Amount", "field": "amount"}
         ]
-        # Define actions dynamically for each activity
-        for activity in activities:
-            activity['actions'] = [
-                {"icon": "far fa-edit", "action": f"edit_{activity['id']}", "title": "Edit Activity"},
-                {"icon": "far fa-trash-alt", "action": f"delete_{activity['id']}", "title": "Move to Non-Active"}
-            ]
-        render_table(activities, columns, actions_field="actions", checkbox_key="selected_activities", key="download_active_activities")
+        render_table(activities, columns, checkbox_key="selected_activities", key="download_active_activities")
 
-        # Handle actions
-        for activity in activities:
-            edit_key = f"edit_{activity['id']}"
-            delete_key = f"delete_{activity['id']}"
-            # Edit activity
-            if st.session_state.get(edit_key):
+        # Add Edit and Delete buttons for each row
+        for idx, activity in enumerate(activities):
+            col1, col2, col3 = st.columns([8, 1, 1])
+            with col2:
+                if st.button("Edit", key=f"edit_{activity['id']}_{idx}", help="Edit"):
+                    st.session_state[f"edit_{activity['id']}_active"] = True
+            with col3:
+                if st.button("Delete", key=f"delete_{activity['id']}_{idx}", help="Delete"):
+                    st.session_state[f"delete_{activity['id']}_confirm"] = True
+
+            if st.session_state.get(f"edit_{activity['id']}_active"):
                 with st.form(key=f"edit_activity_form_{activity['id']}"):
                     st.subheader(f"Edit Activity: {activity['activity']}")
                     new_activity_type = st.text_input("Activity Type", value=activity['activity'])
@@ -137,10 +136,10 @@ def display_members_private():
                                 break
                         log_action("Edit Activity", activity['id'], f"Edited activity: {old_activity_type} to {new_activity_type}")
                         st.success("Activity updated successfully!")
-                        st.session_state[edit_key] = False
+                        st.session_state[f"edit_{activity['id']}_active"] = False
                         st.rerun()
-            # Delete activity (move to non-active)
-            if st.session_state.get(delete_key):
+
+            if st.session_state.get(f"delete_{activity['id']}_confirm"):
                 with st.form(key=f"delete_activity_form_{activity['id']}"):
                     st.subheader(f"Move Activity to Non-Active: {activity['activity']}")
                     st.write("Are you sure you want to move this activity to Non-Active Projects?")
@@ -154,7 +153,7 @@ def display_members_private():
                                     break
                             log_action("Move to Non-Active", activity['id'], f"Moved activity to Non-Active: {activity['activity']}")
                             st.success("Activity moved to Non-Active Projects!")
-                            st.session_state[delete_key] = False
+                            st.session_state[f"delete_{activity['id']}_confirm"] = False
                             st.rerun()
                         else:
                             st.error("Activity name does not match. Action cancelled.")
@@ -167,20 +166,19 @@ def display_members_private():
             {"name": "Date", "field": "date", "style": "color: red;"},
             {"name": "Amount", "field": "amount", "style": "color: red;"}
         ]
-        # Define actions dynamically for each non-active activity
-        for activity in non_active_activities:
-            activity['actions'] = [
-                {"icon": "far fa-undo-alt", "action": f"restore_{activity['id']}", "title": "Restore to Active"},
-                {"icon": "far fa-trash-alt", "action": f"permanent_delete_{activity['id']}", "title": "Permanently Delete"}
-            ]
-        render_table(non_active_activities, columns, actions_field="actions", checkbox_key="selected_non_active_activities", key="download_non_active_activities")
+        render_table(non_active_activities, columns, checkbox_key="selected_non_active_activities", key="download_non_active_activities")
 
-        # Handle actions
-        for activity in non_active_activities:
-            restore_key = f"restore_{activity['id']}"
-            permanent_delete_key = f"permanent_delete_{activity['id']}"
-            # Restore activity
-            if st.session_state.get(restore_key):
+        # Add Restore and Delete buttons for each row
+        for idx, activity in enumerate(non_active_activities):
+            col1, col2, col3 = st.columns([8, 1, 1])
+            with col2:
+                if st.button("Restore", key=f"restore_{activity['id']}_{idx}", help="Restore"):
+                    st.session_state[f"restore_{activity['id']}_active"] = True
+            with col3:
+                if st.button("Delete", key=f"permanent_delete_{activity['id']}_{idx}", help="Delete"):
+                    st.session_state[f"permanent_delete_{activity['id']}_confirm"] = True
+
+            if st.session_state.get(f"restore_{activity['id']}_active"):
                 with st.form(key=f"restore_activity_form_{activity['id']}"):
                     st.subheader(f"Restore Activity: {activity['activity']}")
                     st.write("Are you sure you want to restore this activity to Active Projects?")
@@ -194,12 +192,12 @@ def display_members_private():
                                     break
                             log_action("Restore Activity", activity['id'], f"Restored activity to Active: {activity['activity']}")
                             st.success("Activity restored to Active Projects!")
-                            st.session_state[restore_key] = False
+                            st.session_state[f"restore_{activity['id']}_active"] = False
                             st.rerun()
                         else:
                             st.error("Activity name does not match. Action cancelled.")
-            # Permanently delete activity
-            if st.session_state.get(permanent_delete_key):
+
+            if st.session_state.get(f"permanent_delete_{activity['id']}_confirm"):
                 with st.form(key=f"permanent_delete_activity_form_{activity['id']}"):
                     st.subheader(f"Permanently Delete Activity: {activity['activity']}")
                     st.write("Are you sure you want to permanently delete this activity? This action cannot be undone.")
@@ -210,7 +208,7 @@ def display_members_private():
                             st.session_state['activities'] = [act for act in st.session_state['activities'] if act['id'] != activity['id']]
                             log_action("Delete Activity", activity['id'], f"Permanently deleted activity: {activity['activity']}")
                             st.success("Activity permanently deleted!")
-                            st.session_state[permanent_delete_key] = False
+                            st.session_state[f"permanent_delete_{activity['id']}_confirm"] = False
                             st.rerun()
                         else:
                             st.error("Activity name does not match. Deletion cancelled.")
@@ -246,20 +244,19 @@ def display_members_private():
             {"name": "Date", "field": "date"},
             {"name": "Amount", "field": "amount"}
         ]
-        # Define actions dynamically for each completed activity
-        for activity in completed_activities:
-            activity['actions'] = [
-                {"icon": "far fa-edit", "action": f"edit_completed_{activity['id']}", "title": "Edit Activity"},
-                {"icon": "far fa-trash-alt", "action": f"delete_completed_{activity['id']}", "title": "Delete Activity"}
-            ]
-        render_table(completed_activities, columns, actions_field="actions", key="download_completed_activities")
+        render_table(completed_activities, columns, key="download_completed_activities")
 
-        # Handle actions
-        for activity in completed_activities:
-            edit_completed_key = f"edit_completed_{activity['id']}"
-            delete_completed_key = f"delete_completed_{activity['id']}"
-            # Edit completed activity
-            if st.session_state.get(edit_completed_key):
+        # Add Edit and Delete buttons for each row
+        for idx, activity in enumerate(completed_activities):
+            col1, col2, col3 = st.columns([8, 1, 1])
+            with col2:
+                if st.button("Edit", key=f"edit_completed_{activity['id']}_{idx}", help="Edit"):
+                    st.session_state[f"edit_completed_{activity['id']}_active"] = True
+            with col3:
+                if st.button("Delete", key=f"delete_completed_{activity['id']}_{idx}", help="Delete"):
+                    st.session_state[f"delete_completed_{activity['id']}_confirm"] = True
+
+            if st.session_state.get(f"edit_completed_{activity['id']}_active"):
                 with st.form(key=f"edit_completed_form_{activity['id']}"):
                     st.subheader(f"Edit Completed Activity: {activity['activity']}")
                     new_activity_type = st.text_input("Activity Type", value=activity['activity'])
@@ -276,10 +273,10 @@ def display_members_private():
                                 break
                         log_action("Edit Completed Activity", activity['id'], f"Edited completed activity: {old_activity_type} to {new_activity_type}")
                         st.success("Activity updated successfully!")
-                        st.session_state[edit_completed_key] = False
+                        st.session_state[f"edit_completed_{activity['id']}_active"] = False
                         st.rerun()
-            # Delete completed activity
-            if st.session_state.get(delete_completed_key):
+
+            if st.session_state.get(f"delete_completed_{activity['id']}_confirm"):
                 with st.form(key=f"delete_completed_form_{activity['id']}"):
                     st.subheader(f"Delete Completed Activity: {activity['activity']}")
                     st.write("Are you sure you want to permanently delete this activity? This action cannot be undone.")
@@ -290,7 +287,7 @@ def display_members_private():
                             st.session_state['activities'] = [act for act in st.session_state['activities'] if act['id'] != activity['id']]
                             log_action("Delete Completed Activity", activity['id'], f"Permanently deleted completed activity: {activity['activity']}")
                             st.success("Activity permanently deleted!")
-                            st.session_state[delete_completed_key] = False
+                            st.session_state[f"delete_completed_{activity['id']}_confirm"] = False
                             st.rerun()
                         else:
                             st.error("Activity name does not match. Deletion cancelled.")
