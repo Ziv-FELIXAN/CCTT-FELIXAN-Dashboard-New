@@ -131,3 +131,4 @@ def display_test_table():
 
     table_html += "</table>"
     st.markdown(table_html, unsafe_allow_html=True)
+    
