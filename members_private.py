@@ -56,7 +56,7 @@ def display_members_private():
     non_active_activities = [activity for activity in st.session_state['activities'] if activity['user_id'] == user_id and not activity['is_active']]
     checklist_items = [item for item in st.session_state['checklist'] if item['user_id'] == user_id]
     contracts = [contract for contract in st.session_state['contracts'] if contract['user_id'] == user_id]
-    assets = [asset for asset in st.session_state['assets'] if contract['user_id'] == user_id]
+    assets = [asset for asset in st.session_state['assets'] if asset['user_id'] == user_id]  # Fixed: Changed 'contract' to 'asset'
 
     def log_action(action_type, object_id, details):
         st.session_state['action_counter'] += 1
@@ -276,4 +276,56 @@ def display_members_private():
     with st.session_state['tabs'][3]:
         st.markdown(
             "<div style='border: 1px solid #E0E0E0; border-radius: 4px; padding: 8px; margin-bottom: 8px;'>"
-            "<h3 style='margin-top: 0; color: black; font-size: 16px;'>Relate
+            "<h3 style='margin-top: 0; color: black; font-size: 16px;'>Related Assets for Members</h3>",
+            unsafe_allow_html=True
+        )
+
+        st.markdown("<h4 style='font-size: 14px; font-weight: 500; margin-top: 0; color: black;'>Filter by Module</h4>", unsafe_allow_html=True)
+        module_types = ["Contracts", "Assets"]
+        selected_module = st.selectbox("Select Module", module_types, key="related_assets_module")
+
+        if selected_module == "Contracts":
+            items = contracts
+            columns = [
+                {"name": "ID", "field": "id"},
+                {"name": "Description", "field": "description"},
+                {"name": "Details", "field": "date", "format": lambda x: f"{x['date']} | {x['amount']}"},
+                {"name": "Status", "field": "status", "style": "color: green;" if x['status'] == "Active" else "color: red;"}
+            ]
+        else:
+            items = assets
+            columns = [
+                {"name": "ID", "field": "id"},
+                {"name": "Description", "field": "description"},
+                {"name": "Details", "field": "value", "format": lambda x: f"Value: {x['value']}"},
+                {"name": "Status", "field": "status", "style": "color: green;" if x['status'] == "Active" else "color: red;"}
+            ]
+
+        render_table(items, columns, key="download_related_assets")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with st.session_state['tabs'][4]:
+        st.markdown(
+            "<div style='border: 1px solid #E0E0E0; border-radius: 4px; padding: 8px; margin-bottom: 8px;'>"
+            "<h3 style='margin-top: 0; color: black; font-size: 16px;'>Activity Log</h3>",
+            unsafe_allow_html=True
+        )
+
+        st.markdown("<h4 style='font-size: 14px; font-weight: 500; margin-top: 0; color: black;'>Notification Settings</h4>", unsafe_allow_html=True)
+        notify_user = st.checkbox("Send notifications to email/phone for each action", value=st.session_state['notify_user'])
+        if notify_user != st.session_state['notify_user']:
+            st.session_state['notify_user'] = notify_user
+            st.success("Notification settings updated!")
+
+        st.markdown("<h4 style='font-size: 14px; font-weight: 500; margin-top: 8px; color: black;'>Log Entries</h4>", unsafe_allow_html=True)
+        columns = [
+            {"name": "Action ID", "field": "action_id"},
+            {"name": "Action Type", "field": "action_type"},
+            {"name": "Object ID", "field": "object_id"},
+            {"name": "Details", "field": "details"},
+            {"name": "Timestamp", "field": "timestamp"}
+        ]
+        render_table(st.session_state['action_log'], columns, key="download_log")
+
+        st.markdown("</div>", unsafe_allow_html=True)
