@@ -56,7 +56,7 @@ def display_members_private():
     non_active_activities = [activity for activity in st.session_state['activities'] if activity['user_id'] == user_id and not activity['is_active']]
     checklist_items = [item for item in st.session_state['checklist'] if item['user_id'] == user_id]
     contracts = [contract for contract in st.session_state['contracts'] if contract['user_id'] == user_id]
-    assets = [asset for asset in st.session_state['assets'] if asset['user_id'] == user_id]  # Fixed: Changed 'contract' to 'asset'
+    assets = [asset for asset in st.session_state['assets'] if asset['user_id'] == user_id]
 
     def log_action(action_type, object_id, details):
         st.session_state['action_counter'] += 1
@@ -290,7 +290,7 @@ def display_members_private():
                 {"name": "ID", "field": "id"},
                 {"name": "Description", "field": "description"},
                 {"name": "Details", "field": "date", "format": lambda x: f"{x['date']} | {x['amount']}"},
-                {"name": "Status", "field": "status", "style": "color: green;" if x['status'] == "Active" else "color: red;"}
+                {"name": "Status", "field": "status", "format": lambda x: f"<span style='color: {'green' if x['status'] == 'Active' else 'red'}'>{x['status']}</span>"}
             ]
         else:
             items = assets
@@ -298,7 +298,7 @@ def display_members_private():
                 {"name": "ID", "field": "id"},
                 {"name": "Description", "field": "description"},
                 {"name": "Details", "field": "value", "format": lambda x: f"Value: {x['value']}"},
-                {"name": "Status", "field": "status", "style": "color: green;" if x['status'] == "Active" else "color: red;"}
+                {"name": "Status", "field": "status", "format": lambda x: f"<span style='color: {'green' if x['status'] == 'Active' else 'red'}'>{x['status']}</span>"}
             ]
 
         render_table(items, columns, key="download_related_assets")
