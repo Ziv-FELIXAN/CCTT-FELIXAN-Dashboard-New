@@ -17,8 +17,9 @@ def display_test_table():
     # Convert test_data to DataFrame
     df = pd.DataFrame(st.session_state['test_data'])
     df['Select'] = [False] * len(df)  # Add a Select column for checkboxes
+    df['Actions'] = [''] * len(df)  # Add an Actions column for Edit/Delete icons
 
-    # Display the DataFrame with checkboxes
+    # Display the DataFrame with checkboxes and icons
     edited_df = st.data_editor(
         df,
         column_config={
@@ -27,20 +28,21 @@ def display_test_table():
             "name": st.column_config.TextColumn("Name", disabled=True),
             "value": st.column_config.TextColumn("Value", disabled=True),
             "status": st.column_config.TextColumn("Status", disabled=True),
+            "Actions": st.column_config.Column("Actions", disabled=True)
         },
         hide_index=True,
         use_container_width=True,
         num_rows="fixed"
     )
 
-    # Add Edit and Delete buttons to the right of each row
+    # Add Edit and Delete icons in the Actions column
     for idx, item in enumerate(st.session_state['test_data']):
-        col1, col2, col3 = st.columns([8, 1, 1])
-        with col2:
-            if st.button("Edit", key=f"edit_button_{item['id']}_{idx}", help="Edit"):
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("✏️", key=f"edit_icon_{item['id']}_{idx}", help="Edit"):
                 st.session_state[f"edit_{item['id']}_active"] = True
-        with col3:
-            if st.button("Delete", key=f"delete_button_{item['id']}_{idx}", help="Delete"):
+        with col2:
+            if st.button("🗑️", key=f"delete_icon_{item['id']}_{idx}", help="Delete"):
                 st.session_state[f"delete_{item['id']}_confirm"] = True
 
         if st.session_state.get(f"edit_{item['id']}_active"):
