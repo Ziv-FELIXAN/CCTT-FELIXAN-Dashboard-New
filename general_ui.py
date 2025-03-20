@@ -34,9 +34,9 @@ def setup_general_ui():
         f"<div style='background-image: url(\"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80\"); background-size: cover; background-position: center; padding: 20px; text-align: center; position: relative;'>"
         f"<h1 style='color: white; font-size: 24px;'><i class='fas fa-house'></i> CTT/FELIXAN System Ver3 - {st.session_state['interface_type']}</h1>"
         "<div style='position: absolute; top: 10px; right: 10px;'>"
-        "<button style='background: none; border: none; color: white; font-size: 20px; cursor: pointer;'><i class='fas fa-cog'></i></button>"
+        "<button style='background: none; border: none; color: white; font-size: 20px; cursor: pointer;' onclick='alert(\"Preferences not implemented yet.\")'><i class='fas fa-cog'></i></button>"
         " "
-        "<button style='background: none; border: none; color: white; font-size: 20px; cursor: pointer;'><i class='fas fa-user-circle'></i></button>"
+        "<button style='background: none; border: none; color: white; font-size: 20px; cursor: pointer;' onclick='alert(\"User Management not implemented yet.\")'><i class='fas fa-user-circle'></i></button>"
         "</div>"
         "</div>"
         f"<div style='background-color: {header_color}; height: 15px; width: 100%;'></div>",
