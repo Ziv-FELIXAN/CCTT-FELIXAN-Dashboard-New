@@ -329,4 +329,3 @@ def display_members_private():
         render_table(st.session_state['action_log'], columns, key="download_log")
 
         st.markdown("</div>", unsafe_allow_html=True)
-        
