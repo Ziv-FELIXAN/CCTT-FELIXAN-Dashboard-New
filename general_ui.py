@@ -15,19 +15,16 @@ def setup_general_ui():
     if 'selected_module' not in st.session_state:
         st.session_state['selected_module'] = 'Dashboard'
 
-    # Version management with SQLite
     conn = sqlite3.connect('versions.db', check_same_thread=False)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS versions (version TEXT PRIMARY KEY, data TEXT, timestamp TEXT)''')
     conn.commit()
 
-    # Save current version
     current_version = "VER3"
     current_data = json.dumps(st.session_state['users'])
     c.execute("INSERT OR REPLACE INTO versions (version, data, timestamp) VALUES (?, ?, ?)", (current_version, current_data, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
     conn.commit()
 
-    # Header with inline styles
     header_color = st.session_state['users'][st.session_state['interface_type']]['color']
     st.markdown(
         f"<div style='background-image: url(\"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80\"); background-size: cover; background-position: center; padding: 20px; text-align: center; position: relative;'>"
@@ -42,10 +39,8 @@ def setup_general_ui():
         unsafe_allow_html=True
     )
 
-    # Spacer
     st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
 
-    # Navigation buttons with inline styles
     nav_container = st.container()
     with nav_container:
         col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
