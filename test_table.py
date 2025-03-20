@@ -63,7 +63,12 @@ def display_test_table():
             display: flex;
             flex-direction: row;
             gap: 2px;  /* Reduced gap between buttons */
-            margin-bottom: 2px;  /* Reduced margin between button pairs */
+            margin: 0;  /* No margin between button pairs */
+            padding: 0;  /* No padding */
+        }
+        .button-pair > div {
+            margin: 0 !important;  /* Remove any default margins */
+            padding: 0 !important;  /* Remove any default padding */
         }
         </style>
         """,
@@ -109,7 +114,6 @@ def display_test_table():
     with col_buttons:
         # Add Edit and Delete buttons for each row
         for idx, item in enumerate(st.session_state['test_data']):
-            st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)  # Spacer to align with table rows
             with st.container():
                 st.markdown("<div class='button-pair'>", unsafe_allow_html=True)
                 col_edit, col_delete = st.columns([1, 1])
