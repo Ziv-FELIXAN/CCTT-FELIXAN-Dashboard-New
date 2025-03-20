@@ -8,6 +8,22 @@ def display_test_table():
             {'id': 3, 'name': 'Item 3', 'value': '$300', 'status': 'Active'}
         ]
 
+    # Custom CSS to control button height and remove border radius
+    st.markdown(
+        """
+        <style>
+        div.stButton > button {
+            height: 20px;
+            font-size: 13px;
+            padding: 0px 5px;
+            border-radius: 0px;
+            line-height: 20px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     st.markdown(
         "<h3 style='color: black; font-size: 16px;'>Test Table</h3>",
         unsafe_allow_html=True
