@@ -39,7 +39,8 @@ def custom_button(label, key, action, width="60px", height="20px", font_size="12
         }};
         </script>
         """,
-        height=int(height.replace("px", "")) + 10
+        height=int(height.replace("px", "")) + 10,
+        width=int(width.replace("px", "")) + 10
     )
 
     # Hidden Streamlit button to trigger the action
