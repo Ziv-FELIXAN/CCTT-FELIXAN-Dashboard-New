@@ -4,12 +4,11 @@ import json
 from datetime import datetime
 
 def setup_general_ui():
-    # Initialize session state for interface and users
     if 'interface_type' not in st.session_state:
         st.session_state['interface_type'] = 'Management'
     if 'users' not in st.session_state:
         st.session_state['users'] = {
-            "Private": {"type": "Private", "modules": ["Dashboard", "Members", "Loans Regular", "Assets", "Contracts", "Carat", "Triple C"], "color": "#E74C3C"},  # Red for Private
+            "Private": {"type": "Private", "modules": ["Dashboard", "Members", "Loans Regular", "Assets", "Contracts", "Carat", "Triple C"], "color": "#E74C3C"},
             "Business": {"type": "Business", "modules": ["Dashboard", "Blocks", "Loans Regular", "Carat Letter of Credit", "Assets", "Contracts", "Carat", "Triple C", "Secure Transport", "Bids", "Exchange", "Meeting Room"], "color": "#1E3A8A"},
             "Management": {"type": "Management", "modules": ["Dashboard", "Members", "Loans Regular", "Carat Letter of Credit", "Assets", "Contracts", "Carat", "Triple C", "Insurance", "Transactions Audit", "Secure Transport", "Bids", "Exchange", "System Revenue", "Meeting Room"], "color": "#2C3E50"}
         }
@@ -28,7 +27,7 @@ def setup_general_ui():
     c.execute("INSERT OR REPLACE INTO versions (version, data, timestamp) VALUES (?, ?, ?)", (current_version, current_data, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
     conn.commit()
 
-    # Header with background image and color strip
+    # Header with inline styles
     header_color = st.session_state['users'][st.session_state['interface_type']]['color']
     st.markdown(
         f"<div style='background-image: url(\"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80\"); background-size: cover; background-position: center; padding: 20px; text-align: center; position: relative;'>"
@@ -46,16 +45,7 @@ def setup_general_ui():
     # Spacer
     st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
 
-    # Navigation buttons
-    st.markdown(
-        "<style>"
-        ".nav-buttons {display: flex; justify-content: flex-start; gap: 5px; margin-top: 15px; flex-wrap: wrap; align-items: flex-start;}"
-        ".nav-buttons .stButton {margin-right: 5px; flex: 0 0 auto;}"
-        ".nav-buttons .stButton>button {padding: 5px 10px; background-color: #f1f1f1; border: none; border-radius: 5px; cursor: pointer; text-align: left; width: auto; display: inline-block; font-size: 14px;}"
-        ".nav-buttons .stButton>button:hover {background-color: #e0e0e0;}"
-        "</style>",
-        unsafe_allow_html=True
-    )
+    # Navigation buttons with inline styles
     nav_container = st.container()
     with nav_container:
         col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
@@ -77,13 +67,12 @@ def setup_general_ui():
         with col4:
             about_option = st.selectbox("About", ["Select", "System Info", "Help"], key="about_dropdown")
             if about_option != "Select":
-                st.write(f"Selected: {about_option} (Content to be added later)")
+                st.markdown(f"<p style='color: black; font-size: 14px;'>Selected: {about_option} (Content to be added later)</p>", unsafe_allow_html=True)
 
     return conn, c, current_version
 
 def setup_version_management(conn, c, current_version):
-    # Version management section (below footer)
-    st.write("Version Management (Admin Only):")
+    st.markdown("<h3 style='color: black; font-size: 16px;'>Version Management (Admin Only):</h3>", unsafe_allow_html=True)
     c.execute("SELECT version, timestamp FROM versions ORDER BY timestamp DESC")
     versions = c.fetchall()
     if versions:
@@ -99,7 +88,6 @@ def setup_version_management(conn, c, current_version):
                     st.success(f"Restored version {version_to_restore}!")
                     st.rerun()
     else:
-        st.write("No versions available to restore.")
+        st.markdown("<p style='color: black; font-size: 14px;'>No versions available to restore.</p>", unsafe_allow_html=True)
 
-    # Close database connection
     conn.close()
