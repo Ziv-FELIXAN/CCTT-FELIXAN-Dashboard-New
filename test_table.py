@@ -52,29 +52,10 @@ def display_test_table():
             background-color: #FF0000;
             color: black;
         }
-        .custom-button {
-            height: 44px;
-            font-size: 12px;
-            padding: 0px 5px;
-            border-radius: 0px;
-            line-height: 44px;
-            width: 60px;
-            text-align: center;
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            display: inline-block;
-            text-decoration: none;
-            color: black;
-        }
-        .custom-button:hover {
-            background-color: #d0d0d0;
-        }
         .button-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 2px;  /* Reduced gap between buttons */
             align-items: center;
             justify-content: center;
             height: 44px;
