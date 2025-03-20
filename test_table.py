@@ -17,10 +17,8 @@ def display_test_table():
     # Convert test_data to DataFrame
     df = pd.DataFrame(st.session_state['test_data'])
     df['Select'] = [False] * len(df)  # Add a Select column for checkboxes
-    df['Edit'] = ['Edit'] * len(df)   # Add an Edit column
-    df['Delete'] = ['Delete'] * len(df)  # Add a Delete column
 
-    # Display the DataFrame with checkboxes and buttons
+    # Display the DataFrame with checkboxes
     edited_df = st.data_editor(
         df,
         column_config={
@@ -29,20 +27,40 @@ def display_test_table():
             "name": st.column_config.TextColumn("Name", disabled=True),
             "value": st.column_config.TextColumn("Value", disabled=True),
             "status": st.column_config.TextColumn("Status", disabled=True),
-            "Edit": st.column_config.TextColumn("Edit", disabled=True),
-            "Delete": st.column_config.TextColumn("Delete", disabled=True)
         },
         hide_index=True,
         use_container_width=True,
-        num_rows="fixed"
+        num_rows="fixed",
+        column_order=["Select", "id", "name", "value", "status"]
     )
 
-    # Handle Edit and Delete actions
+    # Add Edit and Delete buttons as columns in the table
     for idx, item in enumerate(st.session_state['test_data']):
-        if edited_df.iloc[idx]['Edit'] == 'Edit' and st.button("Edit", key=f"edit_button_{item['id']}_{idx}", help="Edit", use_container_width=True):
-            st.session_state[f"edit_{item['id']}_active"] = True
-        if edited_df.iloc[idx]['Delete'] == 'Delete' and st.button("Delete", key=f"delete_button_{item['id']}_{idx}", help="Delete", use_container_width=True):
-            st.session_state[f"delete_{item['id']}_confirm"] = True
+        col1, col2, col3, col4, col5, col6, col7 = st.columns([1, 1, 2, 2, 2, 1, 1])
+        with col1:
+            checked_state = st.checkbox("", value=item['id'] in st.session_state.get('selected_test_items', []), key=f"select_{item['id']}_{idx}", label_visibility="hidden")
+            if checked_state:
+                if 'selected_test_items' not in st.session_state:
+                    st.session_state['selected_test_items'] = []
+                if item['id'] not in st.session_state['selected_test_items']:
+                    st.session_state['selected_test_items'].append(item['id'])
+            else:
+                if 'selected_test_items' in st.session_state and item['id'] in st.session_state['selected_test_items']:
+                    st.session_state['selected_test_items'].remove(item['id'])
+        with col2:
+            st.markdown(f"<p style='font-size: 13px; color: black;'>{item['id']}</p>", unsafe_allow_html=True)
+        with col3:
+            st.markdown(f"<p style='font-size: 13px; color: black;'>{item['name']}</p>", unsafe_allow_html=True)
+        with col4:
+            st.markdown(f"<p style='font-size: 13px; color: black;'>{item['value']}</p>", unsafe_allow_html=True)
+        with col5:
+            st.markdown(f"<p style='font-size: 13px; color: {'green' if item['status'] == 'Active' else 'red'};'>{item['status']}</p>", unsafe_allow_html=True)
+        with col6:
+            if st.button("Edit", key=f"edit_button_{item['id']}_{idx}", help="Edit", use_container_width=True):
+                st.session_state[f"edit_{item['id']}_active"] = True
+        with col7:
+            if st.button("Delete", key=f"delete_button_{item['id']}_{idx}", help="Delete", use_container_width=True):
+                st.session_state[f"delete_{item['id']}_confirm"] = True
 
         if st.session_state.get(f"edit_{item['id']}_active"):
             with st.form(key=f"edit_form_{item['id']}"):
