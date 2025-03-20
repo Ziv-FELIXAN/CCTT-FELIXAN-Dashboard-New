@@ -9,13 +9,109 @@ def apply_styling():
         unsafe_allow_html=True
     )
 
-    # Very simple CSS to test if styling is applied
+    # CSS with requested styles
     st.markdown(
         """
         <style>
-        /* Apply a simple style to all text to test if CSS loads */
+        /* General styling */
         * {
-            color: red !important; /* Change all text to red to test */
+            color: #333 !important; /* Reset text color to dark gray */
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 13px; /* Smaller font size as requested */
+            color: #333;
+        }
+        h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        /* Tabs styling */
+        div[data-baseweb="tab-list"] {
+            background-color: #f5f5f5;
+            padding: 2px;
+            border-radius: 4px;
+        }
+        div[data-baseweb="tab"] {
+            padding: 4px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        div[data-baseweb="tab"][aria-selected="true"] {
+            background-color: #E74C3C; /* Red for Private */
+            color: white;
+        }
+        div[data-baseweb="tab"] {
+            background-color: #E74C3C80; /* 50% opacity for non-active tabs */
+            color: #333;
+        }
+        /* Table styling */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            border: 1px solid #E0E0E0;
+        }
+        .custom-table th, .custom-table td {
+            border: 1px solid #E0E0E0;
+            padding: 4px;
+            text-align: left;
+            font-size: 13px;
+        }
+        .custom-table th {
+            background-color: #f1f1f1;
+            font-weight: 500;
+        }
+        .custom-table tr:nth-child(even) {
+            background-color: #F5F5F5;
+        }
+        /* Card styling for Overview */
+        .overview-card {
+            background-color: #F5F5F5;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            padding: 8px;
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .overview-card i {
+            font-size: 14px;
+            color: #666;
+        }
+        .overview-card p {
+            margin: 0;
+            font-size: 13px;
+        }
+        /* Button styling for icons */
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 2px;
+            margin: 0 2px;
+        }
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            width: 13px;
+            height: 13px;
+        }
+        /* Container styling */
+        .module-content {
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
         }
         </style>
         """,
